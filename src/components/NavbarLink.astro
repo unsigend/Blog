@@ -19,9 +19,9 @@ const isActive =
 	@reference "../styles/global.css";
 
 	a {
-		@apply underline-offset-4 hover:underline relative decoration-2;
+		@apply text-foreground dark:text-foreground-dark hover:opacity-70 transition-opacity duration-200;
 	}
 	a.active {
-		@apply underline text-primary dark:text-primary-dark;
+		@apply opacity-100 font-medium underline underline-offset-5;
 	}
 </style>

@@ -13,15 +13,11 @@ export const SITE_BASE = "";
 export const SocialLinks = [
     {
         name: "GitHub",
-        url: "https://github.com/yourusername",
+        url: "https://github.com/unsigend",
     },
     {
         name: "LinkedIn",
         url: "https://www.linkedin.com/in/yourprofile",
-    },
-    {
-        name: "X / Twitter",
-        url: "https://twitter.com/yourusername",
     },
 ];
 

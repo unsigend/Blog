@@ -75,13 +75,13 @@ const { class: className } = Astro.props
 	}
 
 	.theme-option {
-		@apply w-full flex items-center gap-3 px-3 py-2 text-sm
+		@apply w-full flex items-center gap-3 px-3 py-2 text-sm cursor-pointer
 		       hover:bg-foreground/5 dark:hover:bg-foreground-dark/5
 		       transition-colors duration-150 first:rounded-t-lg last:rounded-b-lg;
 	}
 
 	.theme-option.active {
-		@apply bg-foreground/10 dark:bg-foreground-dark/10 text-primary dark:text-primary-dark;
+		@apply bg-foreground/10 dark:bg-foreground-dark/10 font-medium cursor-default;
 	}
 
 	.theme-option:first-child {
