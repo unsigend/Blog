@@ -1,0 +1,170 @@
+---
+import { Icon } from 'astro-icon/components'
+const { class: className } = Astro.props
+---
+
+<div class:list={[className, 'relative']}>
+	<button
+		id="theme-toggle"
+		class="theme-toggle-btn"
+		aria-label="Toggle theme"
+		title="Change theme"
+		aria-expanded="false"
+		aria-haspopup="true"
+	>
+		<Icon
+			id="theme-icon"
+			name="mdi:theme-light-dark"
+			class="text-xl transition-transform duration-200"
+			aria-hidden
+		/>
+	</button>
+	
+	<div
+		id="theme-dropdown"
+		class="theme-dropdown"
+		role="menu"
+		aria-labelledby="theme-toggle"
+	>
+		<button
+			data-theme="theme-auto"
+			class="theme-option"
+			role="menuitem"
+		>
+			<Icon name="mdi:theme-light-dark" class="text-lg" aria-hidden />
+			<span>Auto</span>
+		</button>
+		<button
+			data-theme="theme-light"
+			class="theme-option"
+			role="menuitem"
+		>
+			<Icon name="mdi:weather-sunny" class="text-lg" aria-hidden />
+			<span>Light</span>
+		</button>
+		<button
+			data-theme="theme-dark"
+			class="theme-option"
+			role="menuitem"
+		>
+			<Icon name="mdi:weather-night" class="text-lg" aria-hidden />
+			<span>Dark</span>
+		</button>
+	</div>
+</div>
+
+<style>
+	@reference "../styles/global.css";
+
+	.theme-toggle-btn {
+		@apply p-2 rounded-lg border border-foreground/20 dark:border-foreground-dark/20 
+		       bg-background/50 dark:bg-background-dark/50 backdrop-blur-sm
+		       hover:bg-foreground/5 dark:hover:bg-foreground-dark/5
+		       transition-all duration-200 ease-in-out;
+	}
+
+	.theme-dropdown {
+		@apply absolute top-full right-0 mt-2 w-32 bg-background dark:bg-background-dark
+		       border border-foreground/20 dark:border-foreground-dark/20 rounded-lg
+		       shadow-lg backdrop-blur-sm opacity-0 invisible scale-95
+		       transition-all duration-200 ease-in-out z-50;
+	}
+
+	.theme-dropdown.open {
+		@apply opacity-100 visible scale-100;
+	}
+
+	.theme-option {
+		@apply w-full flex items-center gap-3 px-3 py-2 text-sm
+		       hover:bg-foreground/5 dark:hover:bg-foreground-dark/5
+		       transition-colors duration-150 first:rounded-t-lg last:rounded-b-lg;
+	}
+
+	.theme-option.active {
+		@apply bg-foreground/10 dark:bg-foreground-dark/10 text-primary dark:text-primary-dark;
+	}
+
+	.theme-option:first-child {
+		@apply rounded-t-lg;
+	}
+
+	.theme-option:last-child {
+		@apply rounded-b-lg;
+	}
+</style>
+
+<script>
+	function initThemeSelector() {
+		const toggle = document.getElementById('theme-toggle');
+		const dropdown = document.getElementById('theme-dropdown');
+		
+		if (!toggle || !dropdown) {
+			return;
+		}
+		
+		const options = dropdown.querySelectorAll('.theme-option');
+
+		// Toggle dropdown
+		toggle.addEventListener('click', (e) => {
+			e.stopPropagation();
+			const isOpen = dropdown.classList.contains('open');
+			
+			if (isOpen) {
+				dropdown.classList.remove('open');
+				toggle.setAttribute('aria-expanded', 'false');
+			} else {
+				dropdown.classList.add('open');
+				toggle.setAttribute('aria-expanded', 'true');
+			}
+		});
+
+		// Close dropdown when clicking outside
+		document.addEventListener('click', () => {
+			dropdown.classList.remove('open');
+			toggle.setAttribute('aria-expanded', 'false');
+		});
+
+		// Handle theme selection
+		options.forEach(option => {
+			option.addEventListener('click', () => {
+				const theme = (option as HTMLElement).dataset.theme;
+				
+				// Update active state
+				options.forEach(opt => opt.classList.remove('active'));
+				option.classList.add('active');
+				
+				// Apply theme
+				if (theme === 'theme-auto') {
+					localStorage.removeItem('theme');
+					// Recompute theme based on system preference
+					if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+						document.documentElement.classList.add('dark');
+					} else {
+						document.documentElement.classList.remove('dark');
+					}
+				} else {
+					localStorage.theme = theme?.replace('theme-', '') || 'light';
+					document.documentElement.classList.toggle('dark', theme === 'theme-dark');
+				}
+				
+				// Close dropdown
+				dropdown.classList.remove('open');
+				toggle.setAttribute('aria-expanded', 'false');
+			});
+		});
+
+		// Set initial active state
+		const currentTheme = localStorage.theme || 'auto';
+		const activeOption = dropdown.querySelector(`[data-theme="theme-${currentTheme}"]`) as HTMLElement;
+		if (activeOption) {
+			activeOption.classList.add('active');
+		}
+	}
+
+	// Initialize when DOM is ready
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', initThemeSelector);
+	} else {
+		initThemeSelector();
+	}
+</script>
