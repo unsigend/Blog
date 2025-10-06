@@ -33,7 +33,15 @@ const blogImages = import.meta.glob<{ default: ImageMetadata }>(
 	'/src/assets/blogimages/**/*.{jpeg,jpg,png,gif}'
 )
 
-const coverImagePath = `/src/assets/blogimages/${slug}/cover.jpg`
+// Try to find cover image with different extensions
+const possibleCoverPaths = [
+	`/src/assets/blogimages/${slug}/cover.jpg`,
+	`/src/assets/blogimages/${slug}/cover.gif`,
+	`/src/assets/blogimages/${slug}/cover.png`,
+	`/src/assets/blogimages/${slug}/cover.jpeg`
+]
+
+const coverImagePath = possibleCoverPaths.find(path => blogImages[path])
 
 const lastModified = dayjs(remarkPluginFrontmatter.lastModified)
 	.utc()

@@ -10,7 +10,15 @@ const blogImages = import.meta.glob<{ default: ImageMetadata }>(
 	'/src/assets/blogimages/**/*.{jpeg,jpg,png,gif}'
 )
 
-const coverImagePath = `/src/assets/blogimages/${post.slug}/cover.jpg`
+// Try to find cover image with different extensions
+const possibleCoverPaths = [
+	`/src/assets/blogimages/${post.slug}/cover.jpg`,
+	`/src/assets/blogimages/${post.slug}/cover.gif`,
+	`/src/assets/blogimages/${post.slug}/cover.png`,
+	`/src/assets/blogimages/${post.slug}/cover.jpeg`
+]
+
+const coverImagePath = possibleCoverPaths.find(path => blogImages[path]) || ''
 ---
 
 <a
