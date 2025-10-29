@@ -4,9 +4,6 @@ import FormattedDate from '../components/FormattedDate.astro'
 import type { MarkdownHeading, ImageMetadata } from 'astro'
 import TableOfContents from '../components/TableOfContents.astro'
 import dayjs from 'dayjs'
-import utc from 'dayjs/plugin/utc'
-
-dayjs.extend(utc)
 
 type Props = CollectionEntry<'blog'>['data'] & {
 	headings: MarkdownHeading[]
@@ -44,9 +41,9 @@ const possibleCoverPaths = [
 
 const coverImagePath = possibleCoverPaths.find(path => blogImages[path]) || ''
 
-const lastModified = dayjs(remarkPluginFrontmatter.lastModified)
-	.utc()
-	.format('D MMM YYYY')
+const lastModified = remarkPluginFrontmatter.lastModified 
+	? dayjs(remarkPluginFrontmatter.lastModified).format('D MMM YYYY')
+	: dayjs(updatedDate || pubDate).format('D MMM YYYY')
 ---
 
 <BaseLayout title={title} description={description}>
@@ -63,19 +60,15 @@ const lastModified = dayjs(remarkPluginFrontmatter.lastModified)
 							{title}
 						</h1>
 						
-						<!-- Metadata -->
-						<div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 text-sm text-gray-600 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700 pb-8">
-							<span class="font-medium">
-								<FormattedDate date={pubDate} />
-							</span>
-							{
-								updatedDate && (
-									<span class="text-xs">
-										Updated <FormattedDate date={updatedDate} />
-									</span>
-								)
-							}
-						</div>
+					<!-- Metadata -->
+					<div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 text-sm text-gray-600 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700 pb-8">
+						<span class="font-medium">
+							<FormattedDate date={pubDate} />
+						</span>
+						<span class="text-md opacity-70">
+							Updated: {lastModified}
+						</span>
+					</div>
 
 						{
 							blogImages[coverImagePath] && (
