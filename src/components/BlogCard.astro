@@ -7,7 +7,7 @@ import { Image } from 'astro:assets'
 const { post } = Astro.props
 
 const blogImages = import.meta.glob<{ default: ImageMetadata }>(
-	'/src/assets/blogimages/**/*.{jpeg,jpg,png,gif}'
+	'/src/assets/blogimages/**/*.{jpeg,jpg,png,gif,webp}'
 )
 
 // Try to find cover image with different extensions
@@ -15,7 +15,8 @@ const possibleCoverPaths = [
 	`/src/assets/blogimages/${post.slug}/cover.jpg`,
 	`/src/assets/blogimages/${post.slug}/cover.gif`,
 	`/src/assets/blogimages/${post.slug}/cover.png`,
-	`/src/assets/blogimages/${post.slug}/cover.jpeg`
+	`/src/assets/blogimages/${post.slug}/cover.jpeg`,
+	`/src/assets/blogimages/${post.slug}/cover.webp`
 ]
 
 const coverImagePath = possibleCoverPaths.find(path => blogImages[path]) || ''
