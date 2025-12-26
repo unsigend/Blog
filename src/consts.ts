@@ -5,9 +5,6 @@ export const SITE_TITLE = "My Blog";
 export const SITE_DESCRIPTION =
     "A personal blog about technology, thoughts, and experiences";
 
-// If you deploy to a subdirectory, set the `WEBSITE_BASE` here.
-// e.g. '/blog' if you are deploying to example.com/blog
-// Leave it as an empty string if you are deploying to a root domain (e.g. example.com)
 export const SITE_BASE = "";
 
 export const SocialLinks = [
@@ -17,7 +14,7 @@ export const SocialLinks = [
     },
     {
         name: "LinkedIn",
-        url: "https://www.linkedin.com/in/yourprofile",
+        url: "https://www.linkedin.com/in/yixiang-qiu/",
     },
 ];
 
