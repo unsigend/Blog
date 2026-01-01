@@ -3,9 +3,26 @@ import { getCollection } from 'astro:content'
 import BlogCard from '../../components/BlogCard.astro'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 
-const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-)
+const allPosts = await getCollection('blog')
+
+// Group posts by category
+const postsByCategory = {
+	'algorithm': allPosts.filter(post => post.data.category === 'algorithm').sort(
+		(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+	),
+	'low-level-system': allPosts.filter(post => post.data.category === 'low-level-system').sort(
+		(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+	),
+	'software-design': allPosts.filter(post => post.data.category === 'software-design').sort(
+		(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+	),
+}
+
+const categoryNames = {
+	'algorithm': 'Algorithm',
+	'low-level-system': 'Low Level System',
+	'software-design': 'Software Design'
+}
 ---
 
 <BaseLayout>
@@ -17,15 +34,30 @@ const posts = (await getCollection('blog')).sort(
 			them.
 		</p>
 	</main>
-	<section class="app-container py-12">
-		<ul class="posts-grid-container">
-			{
-				posts.map((post) => (
-					<li>
-						<BlogCard post={post} />
-					</li>
-				))
+
+	{
+		Object.entries(postsByCategory).map(([categoryKey, posts]) => {
+			if (posts.length === 0) {
+				return null
 			}
-		</ul>
-	</section>
+			const category = categoryKey as keyof typeof categoryNames
+			
+			return (
+				<section class="app-container py-12">
+					<h2 class="text-4xl font-bold mb-8 pb-4 border-b border-gray-200 dark:border-gray-700">
+						{categoryNames[category]}
+					</h2>
+					<ul class="posts-grid-container">
+						{
+							posts.map((post) => (
+								<li>
+									<BlogCard post={post} />
+								</li>
+							))
+						}
+					</ul>
+				</section>
+			)
+		})
+	}
 </BaseLayout>

@@ -8,6 +8,7 @@ const blog = defineCollection({
 		pubDate: z.coerce.date(),
 		updatedDate: z.coerce.date().optional(),
 		coverImageCredit: z.string().optional(),
+		category: z.enum(['algorithm', 'low-level-system', 'software-design']),
 	}),
 })
 

@@ -17,6 +17,7 @@ const {
 	pubDate,
 	updatedDate,
 	coverImageCredit,
+	category,
 	headings,
 	slug,
 	remarkPluginFrontmatter,
@@ -25,7 +26,8 @@ const {
 import BaseLayout from './BaseLayout.astro'
 import { Icon } from 'astro-icon/components'
 
-// Cover image path
+// Cover image path - slug already includes category folder, so use it directly
+// slug format: "category/post-name" or just "post-name"
 const coverImagePath = `/blogimages/${slug}/cover.png`
 
 const lastModified = remarkPluginFrontmatter.lastModified 
