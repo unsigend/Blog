@@ -1,40 +1,24 @@
 ---
 import { SITE_BASE } from '@/consts'
 import FormattedDate from './FormattedDate.astro'
-import type { ImageMetadata } from 'astro'
-import { Image } from 'astro:assets'
 
 const { post } = Astro.props
 
-const blogImages = import.meta.glob<{ default: ImageMetadata }>(
-	'/src/assets/blogimages/**/*.{jpeg,jpg,png,gif,webp}'
-)
-
 // Try to find cover image with different extensions
-const possibleCoverPaths = [
-	`/src/assets/blogimages/${post.slug}/cover.jpg`,
-	`/src/assets/blogimages/${post.slug}/cover.gif`,
-	`/src/assets/blogimages/${post.slug}/cover.png`,
-	`/src/assets/blogimages/${post.slug}/cover.jpeg`,
-	`/src/assets/blogimages/${post.slug}/cover.webp`
-]
-
-const coverImagePath = possibleCoverPaths.find(path => blogImages[path]) || ''
+const possibleCoverExtensions = ['jpg', 'gif', 'png', 'jpeg', 'webp']
+const coverImagePath = `/blogimages/${post.slug}/cover.png`
 ---
 
 <a
 	href={`${SITE_BASE}/blog/${post.slug}/`}
 	class="flex flex-col gap-4 pb-8 h-full group transition-colors"
 >
-	{
-		blogImages[coverImagePath] && (
-			<Image
-				src={blogImages[coverImagePath]()}
-				alt={post.data.title}
-				class="object-cover rounded-xl aspect-video"
-			/>
-		)
-	}
+	<img
+		src={coverImagePath}
+		alt={post.data.title}
+		class="object-cover rounded-xl aspect-video w-full"
+		loading="lazy"
+	/>
 	<h4
 		class="text-2xl font-semibold text-foreground dark:text-foreground-dark group-hover:opacity-70 transition-opacity duration-200"
 	>

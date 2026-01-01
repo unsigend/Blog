@@ -1,7 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content'
 import FormattedDate from '../components/FormattedDate.astro'
-import type { MarkdownHeading, ImageMetadata } from 'astro'
+import type { MarkdownHeading } from 'astro'
 import TableOfContents from '../components/TableOfContents.astro'
 import dayjs from 'dayjs'
 
@@ -23,23 +23,10 @@ const {
 } = Astro.props
 
 import BaseLayout from './BaseLayout.astro'
-import { Image } from 'astro:assets'
 import { Icon } from 'astro-icon/components'
 
-const blogImages = import.meta.glob<{ default: ImageMetadata }>(
-	'/src/assets/blogimages/**/*.{jpeg,jpg,png,gif,webp}'
-)
-
-// Try to find cover image with different extensions
-const possibleCoverPaths = [
-	`/src/assets/blogimages/${slug}/cover.jpg`,
-	`/src/assets/blogimages/${slug}/cover.gif`,
-	`/src/assets/blogimages/${slug}/cover.png`,
-	`/src/assets/blogimages/${slug}/cover.jpeg`,
-	`/src/assets/blogimages/${slug}/cover.webp`
-]
-
-const coverImagePath = possibleCoverPaths.find(path => blogImages[path]) || ''
+// Cover image path
+const coverImagePath = `/blogimages/${slug}/cover.png`
 
 const lastModified = remarkPluginFrontmatter.lastModified 
 	? dayjs(remarkPluginFrontmatter.lastModified).format('D MMM YYYY')
@@ -70,22 +57,17 @@ const lastModified = remarkPluginFrontmatter.lastModified
 						</span>
 					</div>
 
-						{
-							blogImages[coverImagePath] && (
-								<>
-									<Image
-										src={blogImages[coverImagePath]()}
-										alt={title}
-										class="rounded-lg"
-									/>
-									{coverImageCredit && (
-										<p class="mt-2 mb-8 opacity-80 italic text-sm">
-											Image Credit: {coverImageCredit}
-										</p>
-									)}
-								</>
-							)
-						}
+					<img
+						src={coverImagePath}
+						alt={title}
+						class="rounded-lg w-full"
+						loading="lazy"
+					/>
+					{coverImageCredit && (
+						<p class="mt-2 mb-8 opacity-80 italic text-sm">
+							Image Credit: {coverImageCredit}
+						</p>
+					)}
 					</div>
 					<div
 						class="prose prose-neutral prose-lg md:prose-xl dark:prose-invert prose-img:rounded-xl prose-figure:text-center prose-img:mx-auto"
