@@ -14,7 +14,7 @@ When building backend systems, most developers start with the familiar Controlle
 
 In a typical layered architecture, the flow is goes to controllers first, services then the Database layer.
 
-<img src="/src/assets/blogimages/hexagonal-architecture/CSD.png" alt="Traditional Controller-Service-Database Architecture" style="max-width: 350px; height: auto;" loading="lazy" />
+<img src="/blogimages/hexagonal-architecture/CSD.png" alt="Traditional Controller-Service-Database Architecture" style="max-width: 350px; height: auto;" loading="lazy" />
 
 _Figure 1: Traditional Controller-Service-Database Architecture_
 
@@ -32,7 +32,7 @@ The root cause is **Dependency flows in the wrong direction**. Business logic sh
 
 Hexagonal architecture, also known as the "ports and adapters" pattern, inverts these dependencies. The core principle is simple: **business logic should be at the center and independent of external concerns**.
 
-![Hexagonal Architecture](/src/assets/blogimages/hexagonal-architecture/cover.png)
+![Hexagonal Architecture](/blogimages/hexagonal-architecture/cover.png)
 
 _Figure 2: Hexagonal Architecture - Ports and Adapters Pattern_
 
@@ -64,7 +64,7 @@ My design of this architecture contains four layers: Presentation Layer, Control
 
 Source Code: [GitHub repository](https://github.com/unsigend/progress-tracker-server).
 
-![Implementation Architecture](/src/assets/blogimages/hexagonal-architecture/HA-design.png)
+![Implementation Architecture](/blogimages/hexagonal-architecture/HA-design.png)
 
 _Figure 3: Four-Layer Hexagonal Architecture Implementation_
 
