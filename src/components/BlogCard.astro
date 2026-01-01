@@ -20,7 +20,7 @@ const categoryColors = {
 
 const category = (post.data.category || 'software-design') as keyof typeof categoryNames
 // slug already includes category folder, so use it directly
-const coverImagePath = `/blogimages/${post.slug}/cover.png`
+const coverImagePath = `/blogimages/${post.slug}/${post.data.coverImage || 'cover.png'}`
 ---
 
 <a

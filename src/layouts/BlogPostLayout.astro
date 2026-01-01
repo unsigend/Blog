@@ -17,7 +17,7 @@ const {
 	pubDate,
 	updatedDate,
 	coverImageCredit,
-	category,
+	coverImage,
 	headings,
 	slug,
 	remarkPluginFrontmatter,
@@ -28,7 +28,7 @@ import { Icon } from 'astro-icon/components'
 
 // Cover image path - slug already includes category folder, so use it directly
 // slug format: "category/post-name" or just "post-name"
-const coverImagePath = `/blogimages/${slug}/cover.png`
+const coverImagePath = `/blogimages/${slug}/${coverImage || 'cover.png'}`
 
 const lastModified = remarkPluginFrontmatter.lastModified 
 	? dayjs(remarkPluginFrontmatter.lastModified).format('D MMM YYYY')
