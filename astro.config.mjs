@@ -6,6 +6,8 @@ import partytown from "@astrojs/partytown";
 import icon from "astro-icon";
 import rehypeFigureTitle from "rehype-figure-title";
 import { rehypeAccessibleEmojis } from "rehype-accessible-emojis";
+import rehypeKatex from "rehype-katex";
+import remarkMath from "remark-math";
 import { remarkModifiedTime } from "./src/plugins/remark-modified-time.mjs";
 
 // https://astro.build/config
@@ -25,7 +27,7 @@ export default defineConfig({
         plugins: [tailwindcss()],
     },
     markdown: {
-        remarkPlugins: [remarkModifiedTime],
-        rehypePlugins: [rehypeFigureTitle, rehypeAccessibleEmojis],
+        remarkPlugins: [remarkModifiedTime, remarkMath],
+        rehypePlugins: [rehypeFigureTitle, rehypeAccessibleEmojis, rehypeKatex],
     },
 });
