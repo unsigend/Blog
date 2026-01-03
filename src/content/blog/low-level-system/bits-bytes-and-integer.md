@@ -98,6 +98,14 @@ $$
 \end{align}
 $$
 
+Two's-complement representation exhibits an asymmetric property: the absolute value of $\text{TMax}_w$ plus one equals the absolute value of $\text{TMin}_w$:
+
+$$
+|\text{TMax}_w| + 1 = |\text{TMin}_w| = 2^{w-1}
+$$
+
+This asymmetry arises because $\text{TMax}_w + 1 = 2^{w-1}$ while $\text{TMin}_w = -2^{w-1}$, meaning there is one more negative number than positive numbers in the representable range.
+
 ### Conversions between Signed and Unsigned
 
 The same bit pattern can be interpreted as either signed or unsigned, with different numeric values. Conversion functions map between these interpretations.
