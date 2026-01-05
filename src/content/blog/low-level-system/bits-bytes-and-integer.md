@@ -197,6 +197,66 @@ $$
 
 ## Float Point Number
 
+IEEE 754 floating-point representation encodes real numbers using three components: sign bit, exponent field, and fraction field. The format supports single-precision (32-bit) and double-precision (64-bit) representations.
+
+![IEEE 754 Floating-Point Bit Structure](/blogimages/low-level-system/bits-bytes-and-integer/float_binary.png)
+
+_Figure: IEEE 754 single-precision (32-bit) and double-precision (64-bit) bit layouts. Source: CSAPP Chapter 2._
+
+![Floating-Point Value Cases](/blogimages/low-level-system/bits-bytes-and-integer/float_rules.png)
+
+_Figure: Four cases of floating-point representation: Normalized, Denormalized, Infinity, and NaN. Source: CSAPP Chapter 2._
+
+### Normalized Values
+
+Normalized values are the most common case, occurring when the exponent field is neither all zeros nor all ones. The exponent field is interpreted as a biased signed integer.
+
+For a $k$-bit exponent field, the bias is:
+
+$$
+\text{Bias} = 2^{k-1} - 1
+$$
+
+The exponent value $E$ is computed as:
+
+$$
+E = e - \text{Bias}
+$$
+
+where $e$ is the unsigned number represented by the exponent bits. For single precision ($k = 8$), the bias is 127, yielding exponent range $[-126, +127]$. For double precision ($k = 11$), the bias is 1023, yielding exponent range $[-1022, +1023]$.
+
+The fraction field $f$ represents a fractional value in the range $0 \leq f < 1$, with binary representation $0.f_{n-1} \ldots f_1 f_0$. The value of a normalized floating-point number is:
+
+$$
+V = (-1)^s \times M \times 2^E
+$$
+
+where $s$ is the sign bit, $M = 1 + f$ is the significand (mantissa), and $E$ is the exponent. This kind of implicit way to add one more bit for precision.
+
+### Denormalized Values
+
+Denormalized values occur when the exponent field is all zeros. Unlike normalized values, denormalized numbers do not have an implied leading 1 in the significand.
+
+The exponent value is:
+
+$$
+E = 1 - \text{Bias}
+$$
+
+The significand is:
+
+$$
+M = f
+$$
+
+where $f$ is the value of the fraction field without an implied leading 1. This allows representation of zero and very small numbers that cannot be represented in normalized form. The value of a denormalized floating-point number is:
+
+$$
+V = (-1)^s \times M \times 2^E
+$$
+
+**Special cases:** The bit pattern with all zeros (sign bit = 0, exponent = 0, fraction = 0) represents $+0.0$. When the sign bit is 1 with all other fields zero, it represents $-0.0$. In IEEE floating-point, $+0.0$ and $-0.0$ are considered equal in comparisons but may behave differently in some operations.
+
 ## References
 
 Bryant, R. E., & O'Hallaron, D. R. (2016). _Computer Systems: A Programmer's Perspective, Third Edition_. Pearson.
