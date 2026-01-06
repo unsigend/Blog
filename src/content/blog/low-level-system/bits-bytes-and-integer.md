@@ -59,6 +59,20 @@ $$
 
 The final expression uses only NOT and AND operations.
 
+### Branchless Conditionals
+
+Conditional selection can be implemented without branching using bitwise operations. The expression `cond ? x : y` can be computed as:
+
+$$
+(\text{cond} \land x) \lor (\neg \text{cond} \land y)
+$$
+
+**Boolean logic perspective:** When $\text{cond} = 1$ (true), the first term evaluates to $x$ and the second term evaluates to $0$, resulting in $x$. When $\text{cond} = 0$ (false), the first term evaluates to $0$ and the second term evaluates to $y$, resulting in $y$.
+
+**Mathematical perspective:** The expression can be viewed as a linear combination: when $\text{cond}$ is a mask (all bits set to 1 or all bits set to 0), it acts as a selector. If $\text{cond}$ is all 1s, then $\text{cond} \land x = x$ and $\neg \text{cond} \land y = 0$, yielding $x$. If $\text{cond}$ is all 0s, then $\text{cond} \land x = 0$ and $\neg \text{cond} \land y = y$, yielding $y$.
+
+**Important:** The condition $\text{cond}$ must be a mask (all bits 0 or all bits 1), not just a boolean value. This ensures that bitwise operations work correctly across all bits of the operands.
+
 ## Integer Representation
 
 ### Unsigned Encodings
