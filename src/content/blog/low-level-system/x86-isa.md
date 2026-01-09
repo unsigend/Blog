@@ -13,6 +13,8 @@ This blog post provides a summary of x86-64 assembly language, covering instruct
 
 ## Registers
 
+### General Purpose Registers
+
 x86-64 provides 16 general-purpose registers, each accessible at multiple sizes: 64-bit, 32-bit, 16-bit, and 8-bit. Registers serve specific roles in the calling convention: argument passing, return values, and preservation across function calls.
 
 ![x86-64 General-Purpose Registers](/blogimages/low-level-system/x86-isa/registers.png)
@@ -26,6 +28,19 @@ _Figure: x86-64 general-purpose registers showing different sizes and their role
 **Caller-saved registers:** _%rax_, _%rcx_, _%rdx_, _%r8_, _%r9_, _%r10_, and _%r11_ may be modified by callee functions. Callers must save these values if they need to be preserved across function calls.
 
 **Special registers:** _%rsp_ is the stack pointer, pointing to the top of the stack. _%rbp_ base pointer is typically used as a frame pointer, though it can be used as a general-purpose callee-saved register.
+
+### Flags Register
+
+The flags register (RFLAGS) contains condition codes that are set by arithmetic and logical operations. These flags enable conditional branching and overflow detection.
+
+| Flag | Name          | Description                                                                 | Condition for $t = a + b$                                     |
+| ---- | ------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| CF   | Carry flag    | The most recent operation generated a carry out of the most significant bit | $(unsigned) t < (unsigned) a$ (unsigned overflow)             |
+| ZF   | Zero flag     | The most recent operation yielded zero                                      | $t == 0$                                                      |
+| SF   | Sign flag     | The most recent operation yielded a negative value                          | $t < 0$                                                       |
+| OF   | Overflow flag | The most recent operation caused a two's-complement overflow                | $(a < 0 == b < 0) \land (t < 0 \neq a < 0)$ (signed overflow) |
+
+The carry flag (CF) detects overflow for unsigned operations, while the overflow flag (OF) detects two's-complement signed overflow.
 
 ## Addressing Modes
 
@@ -151,7 +166,72 @@ Multiplication and division operations that produce 128-bit results require spec
 
 **cqto:** The _cqto_ instruction sign-extends the 64-bit value in _%rax_ to a 128-bit value spanning _%rdx:%rax_, preparing the dividend for signed division operations.
 
-### Branching
+### Branching and Control
+
+#### Comparison and Test Instructions
+
+Comparison and test instructions set condition flags without storing results, enabling conditional branching. Both instruction types modify flags but differ in their underlying operation.
+
+| Instruction | Based on     | Description         |
+| ----------- | ------------ | ------------------- |
+| CMP         | $S_2 - S_1$  | Compare             |
+| cmpb        |              | Compare byte        |
+| cmpw        |              | Compare word        |
+| cmpl        |              | Compare double word |
+| cmpq        |              | Compare quad word   |
+| TEST        | $S_1 \& S_2$ | Test                |
+| testb       |              | Test byte           |
+| testw       |              | Test word           |
+| testl       |              | Test double word    |
+| testq       |              | Test quad word      |
+
+**Difference:** _CMP_ performs subtraction ($S_2 - S_1$) to set flags based on the relationship between operands, useful for comparing values. _TEST_ performs bitwise AND ($S_1 \& S_2$) to set flags, useful for testing specific bits or checking if a value is zero.
+
+#### Conditional Set
+
+SET instructions set a byte destination to 0 or 1 based on condition flags, enabling conditional data movement without branching.
+
+| Instruction | Synonym | Effect                                           | Set condition                    |
+| ----------- | ------- | ------------------------------------------------ | -------------------------------- |
+| sete $D$    | setz    | $D \leftarrow ZF$                                | Equal / zero                     |
+| setne $D$   | setnz   | $D \leftarrow \sim ZF$                           | Not equal / not zero             |
+| sets $D$    |         | $D \leftarrow SF$                                | Negative                         |
+| setns $D$   |         | $D \leftarrow \sim SF$                           | Nonnegative                      |
+| setg $D$    | setnle  | $D \leftarrow \sim (SF \oplus OF) \land \sim ZF$ | Greater (signed $>$)             |
+| setge $D$   | setnl   | $D \leftarrow \sim (SF \oplus OF)$               | Greater or equal (signed $\geq$) |
+| setl $D$    | setnge  | $D \leftarrow SF \oplus OF$                      | Less (signed $<$)                |
+| setle $D$   | setng   | $D \leftarrow (SF \oplus OF) \lor ZF$            | Less or equal (signed $\leq$)    |
+| seta $D$    | setnbe  | $D \leftarrow \sim CF \land \sim ZF$             | Above (unsigned $>$)             |
+| setae $D$   | setnb   | $D \leftarrow \sim CF$                           | Above or equal (unsigned $\geq$) |
+| setb $D$    | setnae  | $D \leftarrow CF$                                | Below (unsigned $<$)             |
+| setbe $D$   | setna   | $D \leftarrow CF \lor ZF$                        | Below or equal (unsigned $\leq$) |
+
+SET instructions evaluate condition flags and set the destination byte to 1 if the condition is true, 0 otherwise. Signed comparisons use SF and OF flags, while unsigned comparisons use CF and ZF flags.
+
+#### Conditional Jump
+
+Jump instructions transfer control to a target address based on condition flags. Unconditional jumps always execute, while conditional jumps execute only when specific flag conditions are met.
+
+| Instruction    | Synonym | Jump condition                      | Description                      |
+| -------------- | ------- | ----------------------------------- | -------------------------------- |
+| jmp Label      |         | $1$                                 | Direct jump                      |
+| jmp $*Operand$ |         | $1$                                 | Indirect jump                    |
+| je Label       | jz      | $ZF$                                | Equal / zero                     |
+| jne Label      | jnz     | $\sim ZF$                           | Not equal / not zero             |
+| js Label       |         | $SF$                                | Negative                         |
+| jns Label      |         | $\sim SF$                           | Nonnegative                      |
+| jg Label       | jnle    | $\sim (SF \oplus OF) \land \sim ZF$ | Greater (signed $>$)             |
+| jge Label      | jnl     | $\sim (SF \oplus OF)$               | Greater or equal (signed $\geq$) |
+| jl Label       | jnge    | $SF \oplus OF$                      | Less (signed $<$)                |
+| jle Label      | jng     | $(SF \oplus OF) \lor ZF$            | Less or equal (signed $\leq$)    |
+| ja Label       | jnbe    | $\sim CF \land \sim ZF$             | Above (unsigned $>$)             |
+| jae Label      | jnb     | $\sim CF$                           | Above or equal (unsigned $\geq$) |
+| jb Label       | jnae    | $CF$                                | Below (unsigned $<$)             |
+| jbe Label      | jna     | $CF \lor ZF$                        | Below or equal (unsigned $\leq$) |
+
+Jump instructions enable control flow by conditionally or unconditionally changing the instruction pointer. Direct jumps use a label address, while indirect jumps use an address stored in a register or memory location.
+
+#### Conditional Move
 
 ## References
 
