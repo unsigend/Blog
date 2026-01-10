@@ -233,6 +233,43 @@ Jump instructions enable control flow by conditionally or unconditionally changi
 
 #### Conditional Move
 
+Conditional move instructions transfer data from source to destination only when specific condition flags are set, enabling branchless conditional data movement for improved performance.
+
+| Instruction   | Synonym | Move condition                      | Description                      |
+| ------------- | ------- | ----------------------------------- | -------------------------------- |
+| cmove $S, R$  | cmovz   | $ZF$                                | Equal / zero                     |
+| cmovne $S, R$ | cmovnz  | $\sim ZF$                           | Not equal / not zero             |
+| cmovs $S, R$  |         | $SF$                                | Negative                         |
+| cmovns $S, R$ |         | $\sim SF$                           | Nonnegative                      |
+| cmovg $S, R$  | cmovnle | $\sim (SF \oplus OF) \land \sim ZF$ | Greater (signed $>$)             |
+| cmovge $S, R$ | cmovnl  | $\sim (SF \oplus OF)$               | Greater or equal (signed $\geq$) |
+| cmovl $S, R$  | cmovnge | $SF \oplus OF$                      | Less (signed $<$)                |
+| cmovle $S, R$ | cmovng  | $(SF \oplus OF) \lor ZF$            | Less or equal (signed $\leq$)    |
+| cmova $S, R$  | cmovnbe | $\sim CF \land \sim ZF$             | Above (unsigned $>$)             |
+| cmovae $S, R$ | cmovnb  | $\sim CF$                           | Above or equal (unsigned $\geq$) |
+| cmovb $S, R$  | cmovnae | $CF$                                | Below (unsigned $<$)             |
+| cmovbe $S, R$ | cmovna  | $CF \lor ZF$                        | Below or equal (unsigned $\leq$) |
+
+Conditional move instructions provide a branchless alternative to conditional jumps followed by moves, reducing pipeline stalls and improving performance on modern processors.
+
+## Procedures
+
+The runtime stack manages function calls, storing arguments, return addresses, saved registers, and local variables. The stack grows downward toward lower memory addresses, with _%rsp_ pointing to the current top of the stack.
+
+<img src="/blogimages/low-level-system/x86-isa/stack.png" alt="Stack Frame Layout" width="500" />
+
+_Figure: Stack frame layout showing the structure of nested function calls, with earlier frames, calling function's frame, and executing function's frame._
+
+Each stack frame contains the return address, saved registers, local variables, and space for building arguments for subsequent function calls. When function P calls function Q, P's frame includes arguments for Q, and Q's frame contains its own local data.
+
+| Instruction     | Description      |
+| --------------- | ---------------- |
+| call Label      | Procedure call   |
+| call $*Operand$ | Procedure call   |
+| ret             | Return from call |
+
+The _call_ instruction pushes the return address onto the stack and transfers control to the target procedure. The _ret_ instruction pops the return address from the stack and resumes execution at that address.
+
 ## References
 
 Bryant, R. E., & O'Hallaron, D. R. (2016). _Computer Systems: A Programmer's Perspective, Third Edition_. Pearson.
