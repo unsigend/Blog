@@ -270,6 +270,10 @@ Each stack frame contains the return address, saved registers, local variables, 
 
 The _call_ instruction pushes the return address onto the stack and transfers control to the target procedure. The _ret_ instruction pops the return address from the stack and resumes execution at that address.
 
+#### Linux X86-64 Stack Frame
+
+<img src="/blogimages/low-level-system/x86-isa/stack-frame.jpg" alt="Linux X86-64 Stack Frame" width="300" />
+
 ## References
 
 Bryant, R. E., & O'Hallaron, D. R. (2016). _Computer Systems: A Programmer's Perspective, Third Edition_. Pearson.
