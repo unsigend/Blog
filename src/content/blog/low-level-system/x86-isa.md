@@ -1,8 +1,7 @@
 ---
 title: "x86 ISA"
 description: "An overview of the x86 Instruction Set Architecture (ISA), covering instruction formats, addressing modes, and fundamental assembly programming."
-pubDate: 2026-01-01
-updatedDate: 2026-01-01
+pubDate: 2026-01-06
 category: low-level-system
 coverImage: cover.png
 ---
