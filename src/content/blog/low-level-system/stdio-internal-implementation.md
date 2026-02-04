@@ -1,18 +1,33 @@
 ---
 title: "Stdio Internals"
-description: ""
-pubDate: 2026-02-01
+description: "An exploration of stdio's internal buffering mechanisms, from simple I/O buffer models to musl's implementation."
+pubDate: 2026-02-04
 category: low-level-system
 ---
 
 ## Introduction
 
-The standard I/O library (stdio) provides buffered I/O operations that significantly improve performance by reducing system call overhead. At its core, stdio maintains an internal buffer that maps portions of a file into memory, allowing multiple read or write operations to be batched before interacting with the underlying file system. This post explores the buffering model, examining how file blocks are mapped to memory buffers and how the library tracks file positions and buffer state.
+The C standard library's stdio functions (fread, fwrite, fprintf, etc.) provide buffered I/O operations that significantly improve performance compared to direct system calls. This post explores from a simple I/O buffer model to musl's production-grade stdio implementation, examining how real-world libraries handle buffering, flushing, and edge cases.
 
-## Buffered I/O Model
+## Simple IO buffer model
 
-The following diagram illustrates the fundamental buffering mechanism used by stdio for file access:
+The simple I/O buffer model uses a single memory buffer to cache file data, reducing expensive system calls. Files are conceptually divided into fixed-size blocks (typically 4KB), and a buffer temporarily holds one block in memory.
 
-![Buffered I/O Model](/blogimages/low-level-system/stdio-internal-implementation/buffer-model.png)
+<img src="/blogimages/low-level-system/stdio-internal-implementation/simple-io.png" alt="Simple IO Buffer Model" width="500" />
 
-_Figure: Buffered I/O model showing the mapping between file blocks on disk and a memory buffer. The offset represents the file position from the start of the file to the start of Block 1 (4096 bytes). Two mapping arrows connect Block 1 to the buffer: one from the left edge of Block 1 to the start of the buffer, and one from the right edge of Block 1 to the end of the buffer. The shaded region indicates valid data between bufpos and bufend._
+_Figure: Simple I/O buffer model showing file blocks and memory buffer with pointers._
+
+**Buffer structure:** The buffer maintains three key pointers:
+
+- _buf:_ Points to the start of the allocated buffer space
+- _bufpos:_ Current read/write position within the buffer
+- _bufend:_ End of valid data in the buffer
+
+## Musl stdio implementation
+
+## References
+
+Harvard CS 61: Problem set 4 – Stdio. Harvard University.
+https://cs61.seas.harvard.edu/site/2025/Stdio/
+
+Plauger, P. J. (1991). _The Standard C Library_. Prentice Hall. https://www.thriftbooks.com/w/standard-c-library-the_pj-plauger/260744/#edition=2342887&idiq=5551627
