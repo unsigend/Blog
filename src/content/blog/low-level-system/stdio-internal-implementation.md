@@ -3,6 +3,7 @@ title: "Stdio Internals"
 description: "An exploration of stdio's internal buffering mechanisms, from simple I/O buffer models to musl's implementation."
 pubDate: 2026-02-04
 category: low-level-system
+coverImage: cover.png
 ---
 
 ## Introduction
@@ -23,7 +24,7 @@ _Figure: Simple I/O buffer model showing file blocks and memory buffer with poin
 - _bufpos:_ Current read/write position within the buffer
 - _bufend:_ End of valid data in the buffer
 
-## Musl stdio implementation
+## stdio implementation
 
 ## References
 
