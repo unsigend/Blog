@@ -28,6 +28,10 @@ export const WebsiteLinks = [
         url: "blog",
     },
     {
+        name: "Paper",
+        url: "paper",
+    },
+    {
         name: "About",
         url: "about",
     },
