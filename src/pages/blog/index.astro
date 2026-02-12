@@ -5,12 +5,12 @@ import BaseLayout from '../../layouts/BaseLayout.astro'
 
 const allPosts = await getCollection('blog')
 
-// Group posts by category
+// Group posts by category (order of keys determines display order)
 const postsByCategory = {
-	'algorithm': allPosts.filter(post => post.data.category === 'algorithm').sort(
+	'low-level-system': allPosts.filter(post => post.data.category === 'low-level-system').sort(
 		(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 	),
-	'low-level-system': allPosts.filter(post => post.data.category === 'low-level-system').sort(
+	'algorithm': allPosts.filter(post => post.data.category === 'algorithm').sort(
 		(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 	),
 	'software-design': allPosts.filter(post => post.data.category === 'software-design').sort(
