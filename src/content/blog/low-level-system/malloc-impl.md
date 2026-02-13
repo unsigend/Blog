@@ -16,6 +16,8 @@ This post explores the design and implementation of a dynamic memory allocator f
 
 ## Design
 
+The allocator is divided into a **fast path** and a **slow path**. If the request size exceeds 128 KiB, allocation goes directly to the slow path and uses the `mmap` system call, bypassing the heap to reduce fragmentation. Otherwise, blocks are served from the segregated free list on the fast path.
+
 ### Chunk
 
 The allocator uses boundary tags: a header and footer on each block, combined with an implicit list for traversal and an explicit list for free blocks. All blocks are 8-byte aligned.
@@ -37,6 +39,10 @@ _Figure: Free block layout with header, prev/next pointers in the old payload ar
 The LSB is the allocated bit: 1 = allocated, 0 = free. Because block size is a multiple of 8, the low 3 bits are always zero and we can steal it use to flags.
 
 The footer mirrors the header to support bidirectional coalescing: when freeing a block, the allocator can read the preceding block’s footer to get its size and status, enabling efficient merging of adjacent free blocks.
+
+### Size Class
+
+Two common size-class schemes are **power-of-two** and **Fibonacci-like**. Power-of-two classes (e.g., 16, 32, 64, 128 bytes) are simple to compute and align well with hardware, bin selection reduces to bit shifts. Fibonacci-like sequences (e.g., 8, 13, 21, 34, 55) use finer granularity for small sizes, reducing internal fragmentation when requests fall between power-of-two boundaries. The trade-off is simplicity and speed (power-of-two) versus better fit for small allocations (Fibonacci-like).
 
 ### Segregated Free List
 
@@ -67,7 +73,13 @@ _Figure: Heap memory with segregated free lists — allocated blocks (shaded) an
 
 ### Placement Policy
 
-There are three main placement policy: first fit, next fit and best fit.
+**First fit** scans the free list from the start and takes the first block that fits. It is fast often $O(1)$ when the list is ordered by address but can leave small fragments at the front of the list and worsen fragmentation over time.
+
+**Best fit** searches the entire list for the smallest block that satisfies the request. It yields better utilization and lower fragmentation than first fit, at the cost of a full scan $O(N)$ in the worst case, which can be mitigated with segregated lists.
+
+**Next fit** resumes searching from where the previous allocation stopped. But it tends to produce worse fragmentation than first fit because it spreads allocations across the heap instead of compacting them since the "roving pointer" rarely revisits earlier regions, leaving them fragmented.
+
+This implementation uses **best fit** within each size-class bin to balance utilization and the overhead of searching segregated lists.
 
 ### Coalescing Algorithm
 
@@ -78,6 +90,12 @@ There are two main coalescing strategies: **immediate coalescing** and **Deferre
 **Deferred coalescing** postpones merging until allocation time or until some threshold is reached. Free blocks stay separate until the allocator needs to satisfy a request or batch-coalesce. This can reduce the cost of frequent frees but may increase fragmentation and add complexity to the allocator.
 
 ## Implementation
+
+### Structure
+
+### Coalescing
+
+### Functions
 
 ## References
 
