@@ -1,0 +1,10 @@
+<svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="180" height="180" fill="#E8EEF2"/>
+  <circle cx="90" cy="90" r="72" fill="#D4E4EC"/>
+  <!-- Q outer circle -->
+  <circle cx="90" cy="90" r="40" stroke="#000000" stroke-width="11" fill="none"/>
+  <!-- Q tail -->
+  <path d="M 108 108 L 135 135" stroke="#000000" stroke-width="11" stroke-linecap="round"/>
+  <!-- Dot inside Q -->
+  <circle cx="90" cy="90" r="11" fill="#000000"/>
+</svg>
