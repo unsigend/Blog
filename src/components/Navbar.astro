@@ -1,5 +1,6 @@
 ---
 import NavbarLink from './NavbarLink.astro'
+import Logo from './Logo.astro'
 import { Icon } from 'astro-icon/components'
 import ThemeSelector from './ThemeSelector.astro'
 import { WebsiteLinks } from '../consts'
@@ -9,7 +10,7 @@ import { WebsiteLinks } from '../consts'
 	<nav class="">
 		<div class="app-container flex justify-between items-center py-5">
 			<a href="/" aria-label="Home">
-				<img src="/logo.svg" alt="Logo" height="36" width="36" />
+				<Logo />
 			</a>
 			<div class="gap-8 hidden md:flex items-center">
 				{
@@ -78,16 +79,21 @@ import { WebsiteLinks } from '../consts'
 </header>
 
 <script is:inline>
+	function updateFavicon(isDark) {
+		const favicon = document.querySelector('link[rel="icon"]')
+		if (favicon) {
+			favicon.href = isDark ? '/favicon-dark.svg' : '/favicon.svg'
+		}
+	}
+
 	function reComputeTheme() {
-		if (
+		const isDark =
 			localStorage.theme === 'dark' ||
 			(!('theme' in localStorage) &&
 				window.matchMedia('(prefers-color-scheme: dark)').matches)
-		) {
-			document.documentElement.classList.add('dark')
-		} else {
-			document.documentElement.classList.remove('dark')
-		}
+
+		document.documentElement.classList.toggle('dark', isDark)
+		updateFavicon(isDark)
 
 		const theme = localStorage.theme || 'auto'
 		document
@@ -106,10 +112,9 @@ import { WebsiteLinks } from '../consts'
 					reComputeTheme()
 				} else {
 					localStorage.theme = button.dataset.theme.replace('theme-', '')
-					document.documentElement.classList.toggle(
-						'dark',
-						button.dataset.theme === 'theme-dark'
-					)
+					const isDark = button.dataset.theme === 'theme-dark'
+					document.documentElement.classList.toggle('dark', isDark)
+					updateFavicon(isDark)
 				}
 			})
 		})
